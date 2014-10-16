@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+Dir.chdir(ENV['TM_PROJECT_DIRECTORY'] || ENV['TM_DIRECTORY'])
+
+AddedMark   = '"$TM_BUNDLE_SUPPORT/added.pdf"'
+ChangedMark = '"$TM_BUNDLE_SUPPORT/changed.pdf"'
+
+added, changed = [ ], [ ]
+
+open('|${TM_HG:-hg} diff -- "$TM_FILEPATH"') do |io|
+  in_block = false
+  while line = io.gets
+    if line =~ /^@@ -(\d+),(\d+) \+(\d+),(\d+) @@/
+      lineno   = $3.to_i
+      deleted  = 0
+      in_block = true
+    elsif in_block
+      if line =~/^ /
+        lineno += 1
+        deleted = 0
+      elsif line =~/^-/
+        deleted += 1
+      elsif line =~/^\+/
+        if deleted == 0
+          added &lt;&lt; lineno
+        else
+          changed &lt;&lt; lineno
+          deleted -= 1
+        end
+        lineno += 1
+      end
+    end
+  end
+end
+
+%x{ "$TM_MATE" --clear-mark=#{AddedMark} --clear-mark=#{ChangedMark} "$TM_FILEPATH" }
+
+unless added.empty?
+  lines = added.map { |n| "--line=#{n}" }
+  %x{ "$TM_MATE" --set-mark=#{AddedMark} #{lines.join(' ')} "$TM_FILEPATH" }
+end
+
+unless changed.empty?
+  lines = changed.map { |n| "--line=#{n}" }
+  %x{ "$TM_MATE" --set-mark=#{ChangedMark} #{lines.join(' ')} "$TM_FILEPATH" }
+end
+</string>
+	<key>hideFromUser</key>
+	<true/>
+	<key>input</key>
+	<string>none</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>name</key>
+	<string>Update Gutter on Save HG</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>discard</string>
+	<key>scope</key>
+	<string>attr.scm.hg</string>
+	<key>semanticClass</key>
+	<string>callback.document.did-save</string>
+	<key>uuid</key>
+	<string>0542B844-4376-4066-A911-DB88295533D4</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>

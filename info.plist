@@ -9,7 +9,7 @@
 	<key>description</key>
 	<string>Show indication in gutter for added/modified lines</string>
 	<key>name</key>
-	<string>Git Diff Gutter</string>
+	<string>SCM Diff Gutter</string>
 	<key>uuid</key>
 	<string>7A84ECFC-2683-4129-826D-51F05F7E668A</string>
 </dict>

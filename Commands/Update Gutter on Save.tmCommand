@@ -13,7 +13,9 @@ ChangedMark = '"$TM_BUNDLE_SUPPORT/changed.pdf"'
 
 added, changed = [ ], [ ]
 
-open('|${TM_GIT:-git} diff -- "$TM_FILEPATH"') do |io|
+diff_cmd =  '|${TM_%s:-%s} diff -- "$TM_FILEPATH"' % [ENV['TM_SCM_NAME'].upcase, ENV['TM_SCM_NAME']]
+
+open(diff_cmd) do |io|
   in_block = false
   while line = io.gets
     if line =~ /^@@ -(\d+),(\d+) \+(\d+),(\d+) @@/
@@ -66,7 +68,7 @@ end
 	<key>outputLocation</key>
 	<string>discard</string>
 	<key>scope</key>
-	<string>attr.scm.git</string>
+	<string>attr.scm.git, attr.scm.hg</string>
 	<key>semanticClass</key>
 	<string>callback.document.did-save</string>
 	<key>uuid</key>

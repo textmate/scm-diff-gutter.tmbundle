@@ -8,12 +8,20 @@
 	<string>#!/usr/bin/env ruby
 Dir.chdir(ENV['TM_PROJECT_DIRECTORY'] || ENV['TM_DIRECTORY'])
 
-AddedMark   = '"$TM_BUNDLE_SUPPORT/added.pdf"'
-ChangedMark = '"$TM_BUNDLE_SUPPORT/changed.pdf"'
+def reset_marks(lines, mark)
+  args = [ "--clear-mark=#{mark}" ]
+  unless lines.empty?
+    args &lt;&lt; "--set-mark=#{mark}"
+    lines.each { |n| args &lt;&lt; "--line=#{n}" }
+  end
+  args &lt;&lt; ENV['TM_FILEPATH']
+
+  system(ENV['TM_MATE'], *args)
+end
 
 added, changed = [ ], [ ]
 
-diff_cmd =  '|${TM_%s:-%s} diff -- "$TM_FILEPATH"' % [ENV['TM_SCM_NAME'].upcase, ENV['TM_SCM_NAME']]
+diff_cmd = '|${TM_%s:-%s} diff -- "$TM_FILEPATH"' % [ENV['TM_SCM_NAME'].upcase, ENV['TM_SCM_NAME']]
 
 open(diff_cmd) do |io|
   in_block = false
@@ -41,17 +49,8 @@ open(diff_cmd) do |io|
   end
 end
 
-%x{ "$TM_MATE" --clear-mark=#{AddedMark} --clear-mark=#{ChangedMark} "$TM_FILEPATH" }
-
-unless added.empty?
-  lines = added.map { |n| "--line=#{n}" }
-  %x{ "$TM_MATE" --set-mark=#{AddedMark} #{lines.join(' ')} "$TM_FILEPATH" }
-end
-
-unless changed.empty?
-  lines = changed.map { |n| "--line=#{n}" }
-  %x{ "$TM_MATE" --set-mark=#{ChangedMark} #{lines.join(' ')} "$TM_FILEPATH" }
-end
+reset_marks(added,   "#{ENV['TM_BUNDLE_SUPPORT']}/added.pdf")
+reset_marks(changed, "#{ENV['TM_BUNDLE_SUPPORT']}/changed.pdf")
 </string>
 	<key>hideFromUser</key>
 	<true/>

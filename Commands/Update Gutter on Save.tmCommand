@@ -6,9 +6,6 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
-exit unless ENV.has_key?('TM_SCM_NAME') # This might be missing for non-local folders
-
-Dir.chdir(ENV['TM_PROJECT_DIRECTORY'] || ENV['TM_DIRECTORY'])
 
 def reset_marks(lines, mark)
   args = [ "--clear-mark=#{mark}" ]
@@ -21,10 +18,15 @@ def reset_marks(lines, mark)
   system(ENV['TM_MATE'], *args)
 end
 
+case ENV['TM_SCM_NAME']
+  when 'git' then diff_cmd = '|${TM_GIT:-git} diff --no-color -- "$TM_FILEPATH"'
+  when 'hg'  then diff_cmd = '|${TM_HG:-hg} diff -- "$TM_FILEPATH"'
+  else exit # TM_SCM_NAME might be missing for non-local folders
+end
+
 added, changed = [ ], [ ]
 
-diff_cmd = '|${TM_%s:-%s} diff -- "$TM_FILEPATH"' % [ENV['TM_SCM_NAME'].upcase, ENV['TM_SCM_NAME']]
-
+Dir.chdir(ENV['TM_PROJECT_DIRECTORY'] || ENV['TM_DIRECTORY'])
 open(diff_cmd) do |io|
   in_block = false
   while line = io.gets

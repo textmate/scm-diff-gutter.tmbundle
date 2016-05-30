@@ -7,6 +7,8 @@
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
 
+exit if ENV['TM_FILEPATH'].nil?
+
 def reset_marks(lines, mark)
   args = [ "--clear-mark=#{mark}" ]
   unless lines.empty?
@@ -63,7 +65,7 @@ reset_marks(changed, "#{ENV['TM_BUNDLE_SUPPORT']}/changed.pdf")
 	<key>inputFormat</key>
 	<string>text</string>
 	<key>name</key>
-	<string>Update Gutter on Save</string>
+	<string>Update Gutter</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>
@@ -73,7 +75,7 @@ reset_marks(changed, "#{ENV['TM_BUNDLE_SUPPORT']}/changed.pdf")
 	<key>scope</key>
 	<string>attr.scm.git, attr.scm.hg</string>
 	<key>semanticClass</key>
-	<string>callback.document.did-save</string>
+	<string>callback.document.did-save, callback.document.did-open</string>
 	<key>uuid</key>
 	<string>081613BD-FBAF-4339-87AC-ED8FE942C525</string>
 	<key>version</key>

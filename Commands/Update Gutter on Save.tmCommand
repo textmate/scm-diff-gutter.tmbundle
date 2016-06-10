@@ -9,6 +9,16 @@
 
 exit if ENV['TM_FILEPATH'].nil?
 
+def has_git?
+  git = ENV['TM_GIT'] || `which git`.chomp
+  return true unless git == '/usr/bin/git'
+
+  xcode = `xcode-select -p`.chomp
+  return !xcode.empty? &amp;&amp; $?.exitstatus == 0
+end
+
+exit if ENV['TM_SCM_NAME'] == 'git' &amp;&amp; !has_git?
+
 def reset_marks(lines, mark)
   args = [ "--clear-mark=#{mark}" ]
   unless lines.empty?

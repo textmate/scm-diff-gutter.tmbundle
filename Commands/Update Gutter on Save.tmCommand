@@ -31,7 +31,7 @@ def reset_marks(lines, mark)
 end
 
 case ENV['TM_SCM_NAME']
-  when 'git' then diff_cmd = '|${TM_GIT:-git} diff --no-color -- "$TM_FILEPATH"'
+  when 'git' then diff_cmd = '|${TM_GIT:-git} diff --no-color --no-ext-diff -- "$TM_FILEPATH"'
   when 'hg'  then diff_cmd = '|${TM_HG:-hg} diff -- "$TM_FILEPATH"'
   else exit # TM_SCM_NAME might be missing for non-local folders
 end

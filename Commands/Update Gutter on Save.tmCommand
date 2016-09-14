@@ -85,7 +85,7 @@ reset_marks(changed, "#{ENV['TM_BUNDLE_SUPPORT']}/Changed Template.pdf")
 	<key>scope</key>
 	<string>attr.scm.git, attr.scm.hg</string>
 	<key>semanticClass</key>
-	<string>callback.document.did-save, callback.document.did-open</string>
+	<string>callback.document.did-save, callback.document.did-open, callback.document.did-change-scm-status</string>
 	<key>uuid</key>
 	<string>081613BD-FBAF-4339-87AC-ED8FE942C525</string>
 	<key>version</key>

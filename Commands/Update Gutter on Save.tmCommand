@@ -39,7 +39,7 @@ end
 added, changed = [ ], [ ]
 
 Dir.chdir(ENV['TM_PROJECT_DIRECTORY'] || ENV['TM_DIRECTORY'])
-open(diff_cmd) do |io|
+open(diff_cmd, 'r:ascii-8bit') do |io|
   in_block = false
   while line = io.gets
     if line =~ /^@@ -(\d+),(\d+) \+(\d+),(\d+) @@/

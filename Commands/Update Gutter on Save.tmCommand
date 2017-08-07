@@ -39,11 +39,9 @@ end
 added, changed = [ ], [ ]
 
 Dir.chdir(ENV['TM_PROJECT_DIRECTORY'] || ENV['TM_DIRECTORY'])
-open(diff_cmd) do |io|
+open(diff_cmd, 'r:ascii-8bit') do |io|
   in_block = false
   while line = io.gets
-     # `line` may contain non-UTF-8 characters if the document uses a non-UTF-8 encoding. To avoid runtime errors we can simply replace them (we're only interested in the diff markers at the beginning of `line` anyway, not its actual content).
-    line = line.encode('UTF-8', invalid: :replace)
     if line =~ /^@@ -(\d+),(\d+) \+(\d+),(\d+) @@/
       lineno   = $3.to_i
       deleted  = 0

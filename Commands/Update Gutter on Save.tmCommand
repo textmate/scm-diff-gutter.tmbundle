@@ -31,14 +31,14 @@ def reset_marks(lines, mark)
 end
 
 case ENV['TM_SCM_NAME']
-  when 'git' then diff_cmd = '|${TM_GIT:-git} diff --no-color --no-ext-diff -- "$TM_FILEPATH"'
-  when 'hg'  then diff_cmd = '|${TM_HG:-hg} diff -- "$TM_FILEPATH"'
+  when 'git' then diff_cmd = '|${TM_GIT:-git} diff --no-color --no-ext-diff -- "$TM_FILENAME"'
+  when 'hg'  then diff_cmd = '|${TM_HG:-hg} diff -- "$TM_FILENAME"'
   else exit # TM_SCM_NAME might be missing for non-local folders
 end
 
 added, changed = [ ], [ ]
 
-Dir.chdir(ENV['TM_PROJECT_DIRECTORY'] || ENV['TM_DIRECTORY'])
+Dir.chdir(ENV['TM_DIRECTORY'])
 open(diff_cmd, 'r:ascii-8bit') do |io|
   in_block = false
   while line = io.gets
